@@ -91,7 +91,12 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         mkdir clang
-        wget https://android.googlesource.com/platform/prebuilts/clang/host/${{ env.AOSP_CLANG_SYSTEM }}/+archive/refs/heads/main/clang-${{ env.AOSP_CLANG_VERSION }}.tar.gz
+        URL="https://android.googlesource.com/platform/prebuilts/clang/host/${{ env.AOSP_CLANG_SYSTEM }}/+archive/refs/heads/main/clang-${{ env.AOSP_CLANG_VERSION }}.tar.gz"
+        for i in 1 2 3 4 5; do
+          wget -O clang-${{ env.AOSP_CLANG_VERSION }}.tar.gz "$URL" && break
+          echo "Download failed, retrying in $((i*10)) seconds..."
+          sleep $((i*10))
+        done
         tar -C clang/ -zxvf clang-${{ env.AOSP_CLANG_VERSION }}.tar.gz
         rm -rf clang-${{ env.AOSP_CLANG_VERSION }}.tar.gz
 
